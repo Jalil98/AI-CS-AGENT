@@ -1,0 +1,1 @@
+docker run -d --name n8n -p 5678:5678 -v "D:\AI_CS_Agen\.n8n:/home/node/.n8n" -e WEBHOOK_URL=https://conciliarly-nonreversing-jammie.ngrok-free.dev -e N8N_HOST=conciliarly-nonreversing-jammie.ngrok-free.dev -e N8N_PROTOCOL=https docker.n8n.io/n8nio/n8n
