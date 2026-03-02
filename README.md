@@ -111,6 +111,9 @@ TEST telegram bot AI CS AGENT -->  https://t.me/gadai_ai_bot
 
 <img width="884" height="657" alt="image" src="https://github.com/user-attachments/assets/988a4dc3-840c-431a-82bf-72bafadfc688" />
 
+LINK VIDEO DEMO:
+https://youtu.be/6cKvuSg2954
+
 
 
 
