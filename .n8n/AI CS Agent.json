@@ -1,0 +1,939 @@
+{
+  "name": "My workflow 2 copy",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        16,
+        -16
+      ],
+      "id": "572a78b9-a2e4-4693-a289-165b95355bb6",
+      "name": "Telegram Trigger",
+      "webhookId": "286bcd81-65c0-4e11-8004-b9defbeba3e2",
+      "credentials": {
+        "telegramApi": {
+          "id": "vHsViyNnHeUWgaNr",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{$json.message.text}}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "Anda adalah AI intent classifier untuk sistem gadai.\n\nWAJIB mengembalikan JSON valid tanpa markdown dan tanpa teks tambahan.\n\nFormat wajib:\n{\n  \"intent\": \"nama_intent\",\n  \"value\": \"isi_pesan_user\"\n}\n\nJika user mengirim angka saja (contoh: 30),\nmaka output harus:\n\n{\n  \"intent\": \"input_gram\",\n  \"value\": \"30\"\n}\n\nIdentifikasi intent dari pesan user.\n\nKemungkinan intent:\n- sapaan\n- pilih_emas\n- pilih_elektronik\n- input_gram\n- sebut_barang\n- input_wilayah\n\nRules:\n- Jika user bilang halo/hai → sapaan\n- Jika user pilih emas → pilih_emas\n- Jika user pilih elektronik → pilih_elektronik\n- Jika user kirim angka → input_gram\n- Jika user kirim nama barang → sebut_barang\n- Jika user kirim nama wilayah → input_wilayah\n\nKembalikan JSON saja."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        -16
+      ],
+      "id": "145201dd-2050-43e9-8013-8d3acbffc24d",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        224,
+        112
+      ],
+      "id": "735ebfb6-7fa8-46fb-a0ae-256f7ed4eb68",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "NBPWi6o41JPq3Xmb",
+          "name": "Google Gemini(PaLM) Api account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{$json.message.from.id}}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        272,
+        112
+      ],
+      "id": "91139a3a-b636-423d-911c-475656832015",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{$json.intent}}",
+                    "rightValue": "sapaan",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "e8690190-40bc-48b6-bf86-1dbbc3167ace"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "4151c122-9794-46eb-9637-b1443b4734d1",
+                    "leftValue": "={{$json.intent}}",
+                    "rightValue": "pilih_emas",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "b34b8091-2cae-41c2-90c0-b7c456536169",
+                    "leftValue": "={{$json.intent}}",
+                    "rightValue": "input_gram",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "20a509dd-7771-470d-aba1-e7152f0aa146",
+                    "leftValue": "={{$json.intent}}",
+                    "rightValue": "pilih_elektronik",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "151fffa6-0c1b-479e-bda3-d03ecfad2cc4",
+                    "leftValue": "={{$json.intent}}",
+                    "rightValue": "sebut_barang",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "df7a130d-af24-4e48-87be-972e2dda823e",
+                    "leftValue": "={{$json.intent}}",
+                    "rightValue": "input_wilayah",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        688,
+        -80
+      ],
+      "id": "d5d769b5-bd32-4967-a032-e0152c741e3f",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "jsCode": "let raw = $json.output;\n\n// hapus ```json dan ```\nraw = raw.replace(/```json/g, \"\").replace(/```/g, \"\").trim();\n\nconst parsed = JSON.parse(raw);\n\nreturn [parsed];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        512,
+        -16
+      ],
+      "id": "e5a39e96-bfac-450b-9c31-1d8933c7529a",
+      "name": "output parser"
+    },
+    {
+      "parameters": {
+        "chatId": "={{$node[\"Telegram Trigger\"].json[\"message\"][\"chat\"][\"id\"]}}",
+        "text": "Silakan masukkan berat emas dalam gram.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1088,
+        -64
+      ],
+      "id": "43f4c9a1-85e0-49bb-bd2a-3bec45135678",
+      "name": "send quest emas",
+      "webhookId": "dde5f336-71b6-4c81-a2cd-b55d39097058",
+      "credentials": {
+        "telegramApi": {
+          "id": "vHsViyNnHeUWgaNr",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.metalpriceapi.com/v1/latest?api_key=049d9f6b236566c541fb86248b16b521&base=XAU&currencies=IDR",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1296,
+        -32
+      ],
+      "id": "30d77fa4-383c-4479-8d97-f229650ac5ca",
+      "name": "HTTP Request gold API"
+    },
+    {
+      "parameters": {
+        "jsCode": "const hargaPerOunce = $json.rates?.IDR;\n\nif (!hargaPerOunce) {\n  return [{ error: \"Harga emas tidak tersedia\" }];\n}\n\nconst hargaPerGram = hargaPerOunce / 31.1035;\n\nconst gram = Number($node[\"output parser\"].json.value);\n\nif (isNaN(gram) || gram <= 0) {\n  return [{ error: \"Gram tidak valid\" }];\n}\n\nconst estimasi = hargaPerGram * gram;\n\nreturn [{\n  jenis_barang: \"emas\",\n  pertanyaan: `${gram} gram`,\n  harga_per_gram: Math.round(hargaPerGram),\n  estimasi: Math.round(estimasi)\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1456,
+        -32
+      ],
+      "id": "88b52608-ca62-4605-aeb9-f5a46bb21a8f",
+      "name": "Code hitung emas"
+    },
+    {
+      "parameters": {
+        "chatId": "={{$node[\"Telegram Trigger\"].json[\"message\"][\"chat\"][\"id\"]}}",
+        "text": "=Estimasi Gadai Emas\n\nHarga emas per gram: Rp {{Number($json.harga_per_gram).toLocaleString('id-ID')}}\nBerat: {{$json.pertanyaan}}\nEstimasi Gadai: Rp {{Number($json.estimasi).toLocaleString('id-ID')}}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1888,
+        -144
+      ],
+      "id": "d7f78284-6c64-4d92-b023-b0ec6a86a5de",
+      "name": "outpu harga emas",
+      "webhookId": "1abeaf0b-99dc-4f7f-9b71-3984269415eb",
+      "credentials": {
+        "telegramApi": {
+          "id": "vHsViyNnHeUWgaNr",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$node[\"Telegram Trigger\"].json[\"message\"][\"chat\"][\"id\"]}}",
+        "text": "Apakah Anda ingin menggadaikan emas atau elektronik?",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        800,
+        -192
+      ],
+      "id": "c73f226a-b396-4b25-9dbb-0fe7416a9fc8",
+      "name": "send sapaan",
+      "webhookId": "7b0ab3d0-930e-46eb-ab69-171e7d9f2a3b",
+      "credentials": {
+        "telegramApi": {
+          "id": "vHsViyNnHeUWgaNr",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$node[\"Telegram Trigger\"].json[\"message\"][\"chat\"][\"id\"]}}",
+        "text": "Silakan sebutkan jenis dan tipe barang elektronik Anda.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        896,
+        32
+      ],
+      "id": "916d8109-5254-45c9-817a-6d1222252083",
+      "name": "Send a text message",
+      "webhookId": "dbf50151-b992-4454-86e6-29c1430117cb",
+      "credentials": {
+        "telegramApi": {
+          "id": "vHsViyNnHeUWgaNr",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "load",
+        "qdrantCollection": {
+          "__rl": true,
+          "value": "rag_data_2026",
+          "mode": "list",
+          "cachedResultName": "rag_data_2026"
+        },
+        "prompt": "={{$json.value}}",
+        "topK": 1,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
+      "typeVersion": 1.3,
+      "position": [
+        1024,
+        144
+      ],
+      "id": "82645f55-0b7f-4f44-b8ff-3c1d97d01afd",
+      "name": "Qdrant Vector Store",
+      "credentials": {
+        "qdrantApi": {
+          "id": "PoXnH9Cak4WbCBuE",
+          "name": "QdrantApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "BAAI/bge-m3",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsHuggingFaceInference",
+      "typeVersion": 1,
+      "position": [
+        1024,
+        224
+      ],
+      "id": "444c3745-1bf8-406d-9191-bcb5ce7351d5",
+      "name": "Embeddings HuggingFace Inference",
+      "credentials": {
+        "huggingFaceApi": {
+          "id": "dFnBPmTKA8xrZO1D",
+          "name": "HuggingFaceApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "4f250c88-2a2f-4c59-83de-f5e627f0d18c",
+              "leftValue": "={{$json.score}}",
+              "rightValue": 0.5,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1360,
+        128
+      ],
+      "id": "4ea298f9-d9a3-4af1-bf7c-ee7a3ef376a2",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "chatId": "={{$node[\"Telegram Trigger\"].json[\"message\"][\"chat\"][\"id\"]}}",
+        "text": "Barang ditemukan. Silakan masukkan wilayah Anda.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1728,
+        112
+      ],
+      "id": "3e06f0b6-ca7c-4c26-8a4b-67aed9e66b9f",
+      "name": "barang ditemukan",
+      "webhookId": "39a29eb9-b2f9-4bcb-a1a2-7ada4dc6fd29",
+      "credentials": {
+        "telegramApi": {
+          "id": "vHsViyNnHeUWgaNr",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$node[\"Telegram Trigger\"].json[\"message\"][\"chat\"][\"id\"]}}",
+        "text": "Maap harga barang tidak ditemukan.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1568,
+        224
+      ],
+      "id": "5c2def0b-a099-4002-ac75-f43b673dcc4d",
+      "name": "barang tidak ditemukan",
+      "webhookId": "c05feade-dd3b-4162-b22a-fd776e161eda",
+      "credentials": {
+        "telegramApi": {
+          "id": "vHsViyNnHeUWgaNr",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const staticData = $getWorkflowStaticData('global');\nconst chatId = $node[\"Telegram Trigger\"].json.message.chat.id.toString();\n\nconst session = staticData.sessions?.[chatId];\n\nif (!session) {\n  return [{\n    error: \"Session tidak ditemukan\"\n  }];\n}\n\nconst harga = session.harga_unit;\nconst wilayah = $json.value.toLowerCase();\n\nlet persen = 0.5;\n\nif (wilayah.includes(\"jawa barat\")) persen = 0.7;\nelse if (wilayah.includes(\"dki\")) persen = 0.8;\nelse if (wilayah.includes(\"jawa timur\")) persen = 0.6;\n\nconst estimasi = harga * persen;\n\nreturn [{\n  harga,\n  wilayah,\n  persen,\n  estimasi: Math.round(estimasi)\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        160
+      ],
+      "id": "549a0096-e25d-4168-a53f-113bd22489df",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "jsCode": "const staticData = $getWorkflowStaticData('global');\n\n// ambil harga dari Qdrant\nconst harga = $json.document.metadata.TAKSIRAN;\n\n// ambil chat id\nconst chatId = $node[\"Telegram Trigger\"].json.message.chat.id.toString();\n\n// buat container kalau belum ada\nif (!staticData.sessions) {\n  staticData.sessions = {};\n}\n\n// simpan harga berdasarkan chat id\nstaticData.sessions[chatId] = {\n  harga_unit: harga\n};\n\nreturn $json;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1568,
+        112
+      ],
+      "id": "b80251fa-59f2-4754-860d-77b26f6c625f",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "a41fb488-39b7-4b3a-8e66-c4f19859309f",
+              "leftValue": "={{$json.estimasi}}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1648,
+        -32
+      ],
+      "id": "7220b702-f0b1-41df-9092-56926b8201cf",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal/gadai-dashboard/report.php",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"nama_user\": \"{{$node[\"Telegram Trigger\"].json.message.from.first_name}}\",\n  \"jenis_barang\": \"{{$json.jenis_barang}}\",\n  \"pertanyaan\": \"{{$json.pertanyaan}}\",\n  \"estimasi\": {{$json.estimasi}}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1888,
+        -32
+      ],
+      "id": "72834088-fc7d-4a6c-8c2f-9cd2b5c392ce",
+      "name": "HTTP Request",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "chatId": "={{$node[\"Telegram Trigger\"].json[\"message\"][\"chat\"][\"id\"]}}",
+        "text": "Input tidak valid atau terjadi kesalahan saat menghitung estimasi. Silakan masukkan berat emas dalam angka (contoh: 10).",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1888,
+        80
+      ],
+      "id": "217b79ae-2ac3-4249-aa27-a9143724e778",
+      "name": "Send a text message2",
+      "webhookId": "bf7296c7-cb60-420d-8a45-0df9e30d1cae",
+      "credentials": {
+        "telegramApi": {
+          "id": "vHsViyNnHeUWgaNr",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "2ca02f8a-e4c7-43c0-a8d0-422e4001b9aa",
+              "leftValue": "={{$json.estimasi}}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        912,
+        480
+      ],
+      "id": "eb407dcb-ba95-4e72-a8da-383002aa9341",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal/gadai-dashboard/report.php",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"nama_user\": \"{{$node[\"Telegram Trigger\"].json.message.from.first_name}}\",\n  \"jenis_barang\": \"elektronik\",\n  \"pertanyaan\": \"Wilayah: {{$json.wilayah}}\",\n  \"estimasi\": {{$json.estimasi}}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1200,
+        464
+      ],
+      "id": "0a309267-458a-439e-a954-3c2c8feadbbd",
+      "name": "HTTP Request1",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "chatId": "={{$node[\"Telegram Trigger\"].json[\"message\"][\"chat\"][\"id\"]}}",
+        "text": "=Terjadi kesalahan dalam perhitungan estimasi.\nSilakan ulangi proses dari awal.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1024,
+        576
+      ],
+      "id": "b2bef879-1b4a-43a8-9ee9-b9167643fa11",
+      "name": "barang tidak ditemukan1",
+      "webhookId": "1f5353ac-afb2-4575-9cd1-defb42d9ca5f",
+      "credentials": {
+        "telegramApi": {
+          "id": "vHsViyNnHeUWgaNr",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$node[\"Telegram Trigger\"].json[\"message\"][\"chat\"][\"id\"]}}",
+        "text": "=Harga unit: Rp {{$json.harga}}\nWilayah: {{$json.wilayah}}\nEstimasi gadai ({{$json.persen * 100}}%): Rp {{$json.estimasi}}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1024,
+        368
+      ],
+      "id": "909771e4-b1f3-4331-87ba-0595c94b1583",
+      "name": "barang ditemukan1",
+      "webhookId": "1f5353ac-afb2-4575-9cd1-defb42d9ca5f",
+      "credentials": {
+        "telegramApi": {
+          "id": "vHsViyNnHeUWgaNr",
+          "name": "Telegram account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "output parser",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "output parser": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "send sapaan",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "send quest emas",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request gold API",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Qdrant Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request gold API": {
+      "main": [
+        [
+          {
+            "node": "Code hitung emas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code hitung emas": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings HuggingFace Inference": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Qdrant Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qdrant Vector Store": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "barang tidak ditemukan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "barang ditemukan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "outpu harga emas",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        []
+      ]
+    },
+    "outpu harga emas": {
+      "main": [
+        []
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "barang ditemukan1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "barang tidak ditemukan1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "d694939b-d19b-4a71-8d12-2c890669a1e6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2d41f44653af22deb57d3a0fff1c0d371cd302dc31e5155343c0409f64c016c6"
+  },
+  "id": "lAvcNgIObhEc0qGA",
+  "tags": []
+}
